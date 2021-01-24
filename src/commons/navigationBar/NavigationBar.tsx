@@ -1,26 +1,14 @@
-import {
-  Alignment,
-  Classes,
-  Icon,
-  Navbar,
-  NavbarDivider,
-  NavbarGroup,
-  NavbarHeading
-} from '@blueprintjs/core';
+import { Alignment, Classes, Icon, Navbar, NavbarDivider, NavbarGroup } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 import classNames from 'classnames';
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { Role } from '../application/ApplicationTypes';
-import Dropdown from '../dropdown/Dropdown';
-import Constants from '../utils/Constants';
 
 type NavigationBarProps = DispatchProps & StateProps;
 
-type DispatchProps = {
-  handleLogOut: () => void;
-};
+type DispatchProps = {};
 
 type StateProps = {
   role?: Role;
@@ -31,35 +19,13 @@ type StateProps = {
 const NavigationBar: React.SFC<NavigationBarProps> = props => (
   <Navbar className={classNames('NavigationBar', 'primary-navbar', Classes.DARK)}>
     <NavbarGroup align={Alignment.LEFT}>
-      {!Constants.playgroundOnly && (
-        <>
-          <NavLink
-            activeClassName={Classes.ACTIVE}
-            className={classNames('NavigationBar__link', Classes.BUTTON, Classes.MINIMAL)}
-            to="/academy"
-          >
-            <Icon icon={IconNames.SYMBOL_DIAMOND} />
-            <NavbarHeading className="hidden-xs">Source Academy</NavbarHeading>
-          </NavLink>{' '}
-          <NavLink
-            activeClassName={Classes.ACTIVE}
-            className={classNames('NavigationBar__link', Classes.BUTTON, Classes.MINIMAL)}
-            to="/sourcecast"
-          >
-            <Icon icon={IconNames.MUSIC} />
-            <div className="navbar-button-text hidden-xs">Sourcecast</div>
-          </NavLink>
-        </>
-      )}
       <NavLink
         activeClassName={Classes.ACTIVE}
         className={classNames('NavigationBar__link', Classes.BUTTON, Classes.MINIMAL)}
         to="/playground"
       >
         <Icon icon={IconNames.CODE} />
-        <div className="navbar-button-text hidden-xs">
-          {Constants.playgroundOnly ? 'Source Academy Playground' : 'Playground'}
-        </div>
+        <div className="navbar-button-text hidden-xs">{'Source Academy Playground'}</div>
       </NavLink>
       {props.role && (
         <NavLink
@@ -89,8 +55,6 @@ const NavigationBar: React.SFC<NavigationBarProps> = props => (
       <div className="hidden-xs">
         <NavbarDivider className="default-divider" />
       </div>
-
-      <Dropdown handleLogOut={props.handleLogOut} name={props.name} />
     </NavbarGroup>
   </Navbar>
 );

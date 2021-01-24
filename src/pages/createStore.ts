@@ -59,9 +59,6 @@ function loadStore(loadedStore: SavedState | undefined) {
         isEditorAutorun: loadedStore.playgroundIsEditorAutorun
           ? loadedStore.playgroundIsEditorAutorun
           : defaultState.workspaces.playground.isEditorAutorun,
-        externalLibrary: loadedStore.playgroundExternalLibrary
-          ? loadedStore.playgroundExternalLibrary
-          : defaultState.workspaces.playground.externalLibrary,
         context: {
           ...defaultState.workspaces.playground.context,
           variant: loadedStore.playgroundSourceVariant

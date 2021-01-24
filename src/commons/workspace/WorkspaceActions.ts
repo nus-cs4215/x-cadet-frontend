@@ -4,7 +4,6 @@ import { Variant } from 'x-slang/dist/types';
 
 import { SET_EDITOR_READONLY } from '../../features/sourceRecorder/sourcecast/SourcecastTypes';
 import { SourceLanguage } from '../application/ApplicationTypes';
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
 import { HIGHLIGHT_LINE } from '../application/types/InterpreterTypes';
 import { Position } from '../editor/EditorTypes';
 import { NOTIFY_PROGRAM_EVALUATED, SideContentType } from '../sideContent/SideContentTypes';
@@ -14,7 +13,6 @@ import {
   CHANGE_EDITOR_HEIGHT,
   CHANGE_EDITOR_WIDTH,
   CHANGE_EXEC_TIME,
-  CHANGE_EXTERNAL_LIBRARY,
   CHANGE_SIDE_CONTENT_HEIGHT,
   CHANGE_STEP_LIMIT,
   CHANGE_SUBLANGUAGE,
@@ -26,7 +24,6 @@ import {
   FETCH_SUBLANGUAGE,
   MOVE_CURSOR,
   NAV_DECLARATION,
-  PLAYGROUND_EXTERNAL_SELECT,
   PROMPT_AUTOCOMPLETE,
   SEND_REPL_INPUT_TO_OUTPUT,
   TOGGLE_EDITOR_AUTORUN,
@@ -48,9 +45,6 @@ export const browseReplHistoryDown = (workspaceLocation: WorkspaceLocation) =>
 export const browseReplHistoryUp = (workspaceLocation: WorkspaceLocation) =>
   action(BROWSE_REPL_HISTORY_UP, { workspaceLocation });
 
-export const changeExternalLibrary = (newExternal: string, workspaceLocation: WorkspaceLocation) =>
-  action(CHANGE_EXTERNAL_LIBRARY, { newExternal, workspaceLocation });
-
 export const changeEditorHeight = (height: number, workspaceLocation: WorkspaceLocation) =>
   action(CHANGE_EDITOR_HEIGHT, { height, workspaceLocation });
 
@@ -70,17 +64,6 @@ export const variantSelect = (variant: Variant, workspaceLocation: WorkspaceLoca
   action(VARIANT_SELECT, {
     variant,
     workspaceLocation
-  });
-
-export const externalLibrarySelect = (
-  externalLibraryName: ExternalLibraryName,
-  workspaceLocation: WorkspaceLocation,
-  initialise?: boolean
-) =>
-  action(PLAYGROUND_EXTERNAL_SELECT, {
-    externalLibraryName,
-    workspaceLocation,
-    initialise: initialise || false
   });
 
 export const toggleEditorAutorun = (workspaceLocation: WorkspaceLocation) =>

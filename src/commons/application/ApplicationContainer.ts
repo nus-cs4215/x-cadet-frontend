@@ -2,7 +2,6 @@ import { connect, MapDispatchToProps, MapStateToProps } from 'react-redux';
 import { withRouter } from 'react-router';
 import { bindActionCreators, Dispatch } from 'redux';
 
-import { logOut } from './actions/CommonsActions';
 import Application, { DispatchProps, StateProps } from './Application';
 import { OverallState } from './ApplicationTypes';
 
@@ -20,7 +19,7 @@ const mapStateToProps: MapStateToProps<StateProps, {}, OverallState> = state => 
 });
 
 const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = (dispatch: Dispatch) =>
-  bindActionCreators({ handleLogOut: logOut }, dispatch);
+  bindActionCreators({}, dispatch);
 
 const ApplicationContainer = withRouter(connect(mapStateToProps, mapDispatchToProps)(Application));
 

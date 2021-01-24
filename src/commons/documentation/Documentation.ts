@@ -1,7 +1,5 @@
 import { SourceDocumentation } from 'x-slang';
 
-import { externalLibraries } from '../application/types/ExternalTypes';
-
 const externalLibrariesDocumentation = {};
 
 const MAX_CAPTION_LENGTH = 25;
@@ -12,18 +10,6 @@ function shortenCaption(name: string): string {
   }
 
   return (name = name.substring(0, MAX_CAPTION_LENGTH - 3) + '...');
-}
-
-function mapExternalLibraryName(name: string) {
-  return {
-    caption: shortenCaption(name),
-    value: name,
-    meta: 'const'
-  };
-}
-
-for (const [lib, names] of externalLibraries) {
-  externalLibrariesDocumentation[lib] = names.map(mapExternalLibraryName);
 }
 
 const builtinDocumentation = {};

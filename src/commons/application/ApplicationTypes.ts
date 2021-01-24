@@ -12,7 +12,6 @@ import {
   WorkspaceManagerState,
   WorkspaceState
 } from '../workspace/WorkspaceTypes';
-import { ExternalLibraryName } from './types/ExternalTypes';
 import { SessionState } from './types/SessionTypes';
 
 export type OverallState = {
@@ -149,7 +148,6 @@ export const createDefaultWorkspace = (workspaceLocation: WorkspaceLocation): Wo
   editorReadonly: false,
   editorHeight: 150,
   editorWidth: '50%',
-  externalLibrary: ExternalLibraryName.NONE,
   execTime: 1000,
   highlightedLines: [],
   output: [],
@@ -187,8 +185,7 @@ export const defaultWorkspaceManager: WorkspaceManagerState = {
     playbackData: {
       init: {
         editorValue: '',
-        variant: Constants.defaultSourceVariant,
-        externalLibrary: ExternalLibraryName.NONE
+        variant: Constants.defaultSourceVariant
       },
       inputs: []
     },
@@ -203,8 +200,7 @@ export const defaultWorkspaceManager: WorkspaceManagerState = {
     playbackData: {
       init: {
         editorValue: '',
-        variant: Constants.defaultSourceVariant,
-        externalLibrary: ExternalLibraryName.NONE
+        variant: Constants.defaultSourceVariant
       },
       inputs: []
     },

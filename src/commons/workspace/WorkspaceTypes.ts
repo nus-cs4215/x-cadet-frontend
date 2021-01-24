@@ -3,7 +3,6 @@ import { Context } from 'x-slang';
 import { SourcecastWorkspaceState } from '../../features/sourceRecorder/sourcecast/SourcecastTypes';
 import { SourcereelWorkspaceState } from '../../features/sourceRecorder/sourcereel/SourcereelTypes';
 import { InterpreterOutput } from '../application/ApplicationTypes';
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
 import { HighlightedLines, Position } from '../editor/EditorTypes';
 import { SideContentType } from '../sideContent/SideContentTypes';
 
@@ -25,7 +24,6 @@ export const PROMPT_AUTOCOMPLETE = 'PROMPT_AUTOCOMPLETE';
 export const EVAL_SILENT = 'EVAL_SILENT';
 export const MOVE_CURSOR = 'MOVE_CURSOR';
 export const NAV_DECLARATION = 'NAV_DECLARATION';
-export const PLAYGROUND_EXTERNAL_SELECT = 'PLAYGROUND_EXTERNAL_SELECT ';
 export const SEND_REPL_INPUT_TO_OUTPUT = 'SEND_REPL_INPUT_TO_OUTPUT';
 export const TOGGLE_EDITOR_AUTORUN = 'TOGGLE_EDITOR_AUTORUN';
 export const UPDATE_ACTIVE_TAB = 'UPDATE_ACTIVE_TAB';
@@ -69,7 +67,6 @@ export type WorkspaceState = {
   readonly enableDebugging: boolean;
   readonly isEditorAutorun: boolean;
   readonly output: InterpreterOutput[];
-  readonly externalLibrary: ExternalLibraryName;
   readonly replHistory: ReplHistory;
   readonly replValue: string;
   readonly sharedbConnected: boolean;

@@ -1,5 +1,3 @@
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
-
 export const EDITING_ID = -1;
 
 export type XmlParseStrTask = {
@@ -20,16 +18,12 @@ export type XmlParseStrDeployment = {
     VALUE: string[];
   }>;
   IMPORT?: Array<{
-    $: {
-      name: ExternalLibraryName;
-    };
+    $: {};
     SYMBOL: string[];
   }>;
   // deprecated EXTERNAL in DEPLOYMENT and GRADERDEPLOYMENT, use IMPORT instead
   EXTERNAL?: Array<{
-    $: {
-      name: ExternalLibraryName;
-    };
+    $: {};
     SYMBOL: string[];
   }>;
 };

@@ -7,7 +7,6 @@ import { Variant } from 'x-slang/dist/types';
 import { stringify } from 'x-slang/dist/utils/stringify';
 
 import { InterpreterOutput } from '../application/ApplicationTypes';
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
 import SideContentCanvasOutput from '../sideContent/SideContentCanvasOutput';
 import ReplInput from './ReplInput';
 import { OutputProps } from './ReplTypes';
@@ -21,7 +20,6 @@ type StateProps = {
   inputHidden?: boolean;
   usingSubst?: boolean;
   sourceVariant: Variant;
-  externalLibrary: ExternalLibraryName;
 };
 
 type DispatchProps = {

@@ -10,7 +10,6 @@ import {
   PlaybackStatus,
   SourcecastData
 } from '../../features/sourceRecorder/SourceRecorderTypes';
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
 import controlButton from '../ControlButton';
 
 export type SourceRecorderControlBarProps = DispatchProps & StateProps;
@@ -24,7 +23,6 @@ type DispatchProps = {
   handleSetSourcecastDuration: (duration: number) => void;
   handleSetSourcecastStatus: (playbackStatus: PlaybackStatus) => void;
   handleVariantSelect: (variant: Variant) => void;
-  handleExternalSelect: (name: ExternalLibraryName) => void;
   handlePromptAutocomplete: (row: number, col: number, callback: any) => void;
 };
 
@@ -129,7 +127,6 @@ class SourceRecorderControlBar extends React.PureComponent<SourceRecorderControl
     const currentRevision = this.state.currentDeltaRevision;
     let currentTime = this.audio.current!.currentTime * 1000;
     this.props.handleEditorValueChange(playbackData.init.editorValue);
-    this.props.handleExternalSelect(playbackData.init.externalLibrary);
     this.props.handleVariantSelect(playbackData.init.variant);
     const codeDeltasToApply = playbackData.inputs
       .filter(

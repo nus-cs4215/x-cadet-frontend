@@ -62,7 +62,6 @@ type StateProps = {
   highlightedLines: HighlightedLines[];
   isEditorAutorun: boolean;
   newCursorPosition?: Position;
-  externalLibraryName?: string;
   sourceVariant?: Variant;
   hooks?: EditorHook[];
 };
@@ -204,10 +203,7 @@ const EditorBase = React.memo(
       handlePromptAutocompleteRef.current = props.handlePromptAutocomplete;
     }, [props.handleEditorUpdateBreakpoints, props.handlePromptAutocomplete]);
 
-    const [sourceVariant, externalLibraryName] = [
-      props.sourceVariant || Constants.defaultSourceVariant,
-      props.externalLibraryName || 'NONE'
-    ];
+    const sourceVariant = props.sourceVariant || Constants.defaultSourceVariant;
 
     // this function defines the Ace language and highlighting mode for the
     // given combination of variant and external library. it CANNOT be
@@ -217,7 +213,7 @@ const EditorBase = React.memo(
     // this used to be in useMemo, but selectMode now checks if the mode is
     // already defined and doesn't do it, so it is now OK to keep calling this
     // unconditionally.
-    selectMode(sourceVariant, externalLibraryName);
+    selectMode(sourceVariant);
 
     React.useLayoutEffect(() => {
       if (!reactAceRef.current) {
@@ -274,7 +270,7 @@ const EditorBase = React.memo(
       fontSize: 17,
       height: '100%',
       highlightActiveLine: false,
-      mode: getModeString(sourceVariant, externalLibraryName),
+      mode: getModeString(sourceVariant),
       theme: 'source',
       value: props.editorValue,
       width: '100%',

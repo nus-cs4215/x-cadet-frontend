@@ -1,5 +1,3 @@
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
-
 /**
  * Casts a library returned by an API call to a
  * Library used in the frontend.
@@ -8,7 +6,6 @@ export const castLibrary = (lib: any) => ({
   variant: lib.variant,
   external: {
     /** external names are lowercase for API results */
-    name: lib.external.name.toUpperCase() as ExternalLibraryName,
     symbols: lib.external.symbols
   },
   /** globals are passed as an object, mapping symbol name -> value */

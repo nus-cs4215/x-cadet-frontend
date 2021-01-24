@@ -4,7 +4,6 @@ import { SagaIterator } from 'redux-saga';
 import { call, delay, put, race, select } from 'redux-saga/effects';
 import { Variant } from 'x-slang/dist/types';
 
-import { ExternalLibraryName } from '../../commons/application/types/ExternalTypes';
 import {
   changeQueryString,
   shortenURL,
@@ -66,16 +65,13 @@ function* updateQueryString() {
   const variant: Variant = yield select(
     (state: OverallState) => state.workspaces.playground.context.variant
   );
-  const external: ExternalLibraryName = yield select(
-    (state: OverallState) => state.workspaces.playground.externalLibrary
-  );
+
   const execTime: number = yield select(
     (state: OverallState) => state.workspaces.playground.execTime
   );
   const newQueryString: string = qs.stringify({
     prgrm: compressToEncodedURIComponent(codeString),
     variant,
-    ext: external,
     exec: execTime
   });
   yield put(changeQueryString(newQueryString));

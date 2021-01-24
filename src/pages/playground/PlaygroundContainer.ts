@@ -10,9 +10,7 @@ import {
   debuggerReset,
   debuggerResume
 } from '../../commons/application/actions/InterpreterActions';
-import { logoutGoogle } from '../../commons/application/actions/SessionActions';
 import { OverallState } from '../../commons/application/ApplicationTypes';
-import { ExternalLibraryName } from '../../commons/application/types/ExternalTypes';
 import {
   setEditorSessionId,
   setSharedbConnected
@@ -29,7 +27,6 @@ import {
   clearReplOutput,
   evalEditor,
   evalRepl,
-  externalLibrarySelect,
   fetchSublanguage,
   navigateToDeclaration,
   promptAutocomplete,
@@ -42,12 +39,6 @@ import {
   variantSelect
 } from '../../commons/workspace/WorkspaceActions';
 import { WorkspaceLocation } from '../../commons/workspace/WorkspaceTypes';
-import {
-  persistenceInitialise,
-  persistenceOpenPicker,
-  persistenceSaveFile,
-  persistenceSaveFileAs
-} from '../../features/persistence/PersistenceActions';
 import {
   generateLzString,
   shortenURL,
@@ -74,9 +65,7 @@ const mapStateToProps: MapStateToProps<StateProps, {}, OverallState> = state => 
   replValue: state.workspaces.playground.replValue,
   sourceVariant: state.workspaces.playground.context.variant,
   sharedbConnected: state.workspaces.playground.sharedbConnected,
-  externalLibraryName: state.workspaces.playground.externalLibrary,
-  persistenceUser: state.session.googleUser,
-  persistenceFile: state.playground.persistenceFile
+  persistenceUser: state.session.googleUser
 });
 
 const workspaceLocation: WorkspaceLocation = 'playground';
@@ -106,8 +95,6 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = (dispatch: Dis
       handleShortenURL: (s: string) => shortenURL(s),
       handleUpdateShortURL: (s: string) => updateShortURL(s),
       handleInterruptEval: () => beginInterruptExecution(workspaceLocation),
-      handleExternalSelect: (externalLibraryName: ExternalLibraryName, initialise?: boolean) =>
-        externalLibrarySelect(externalLibraryName, workspaceLocation, initialise),
       handleReplEval: () => evalRepl(workspaceLocation),
       handleReplOutputClear: () => clearReplOutput(workspaceLocation),
       handleReplValueChange: (newValue: string) => updateReplValue(newValue, workspaceLocation),
@@ -124,12 +111,7 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = (dispatch: Dis
       handleDebuggerReset: () => debuggerReset(workspaceLocation),
       handleFetchVariant: fetchSublanguage,
       handlePromptAutocomplete: (row: number, col: number, callback: any) =>
-        promptAutocomplete(workspaceLocation, row, col, callback),
-      handlePersistenceOpenPicker: persistenceOpenPicker,
-      handlePersistenceSaveFile: persistenceSaveFileAs,
-      handlePersistenceUpdateFile: persistenceSaveFile,
-      handlePersistenceInitialise: persistenceInitialise,
-      handlePersistenceLogOut: logoutGoogle
+        promptAutocomplete(workspaceLocation, row, col, callback)
     },
     dispatch
   );

@@ -10,7 +10,6 @@ import {
   InterpreterOutput,
   ResultOutput
 } from '../application/ApplicationTypes';
-import { LOG_OUT } from '../application/types/CommonsTypes';
 import {
   DEBUG_RESET,
   DEBUG_RESUME,
@@ -31,7 +30,6 @@ import {
   CHANGE_EDITOR_HEIGHT,
   CHANGE_EDITOR_WIDTH,
   CHANGE_EXEC_TIME,
-  CHANGE_EXTERNAL_LIBRARY,
   CHANGE_SIDE_CONTENT_HEIGHT,
   CHANGE_STEP_LIMIT,
   CLEAR_REPL_INPUT,
@@ -270,14 +268,6 @@ export const WorkspaceReducer: Reducer<WorkspaceManagerState> = (
           }
         }
       };
-    case CHANGE_EXTERNAL_LIBRARY:
-      return {
-        ...state,
-        [workspaceLocation]: {
-          ...state[workspaceLocation],
-          externalLibrary: action.payload.newExternal
-        }
-      };
     case HANDLE_CONSOLE_LOG:
       /* Possible cases:
        * (1) state[workspaceLocation].output === [], i.e. state[workspaceLocation].output[-1] === undefined
@@ -302,13 +292,6 @@ export const WorkspaceReducer: Reducer<WorkspaceManagerState> = (
           ...state[workspaceLocation],
           output: newOutput
         }
-      };
-    case LOG_OUT:
-      // Preserve the playground workspace even after log out
-      const playgroundWorkspace = state.playground;
-      return {
-        ...defaultWorkspaceManager,
-        playground: playgroundWorkspace
       };
     case EVAL_EDITOR:
       return {

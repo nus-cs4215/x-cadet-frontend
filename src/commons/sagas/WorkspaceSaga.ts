@@ -7,7 +7,6 @@ import { Variant } from 'x-slang/dist/types';
 import { validateAndAnnotate } from 'x-slang/dist/validator/validator';
 
 import { OverallState, styliseSublanguage } from '../application/ApplicationTypes';
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
 import { DEBUG_RESET, DEBUG_RESUME, HIGHLIGHT_LINE } from '../application/types/InterpreterTypes';
 import { Documentation } from '../documentation/Documentation';
 import { actions } from '../utils/ActionsHelper';
@@ -28,7 +27,6 @@ import {
   EVAL_REPL,
   EVAL_SILENT,
   NAV_DECLARATION,
-  PLAYGROUND_EXTERNAL_SELECT,
   PROMPT_AUTOCOMPLETE,
   TOGGLE_EDITOR_AUTORUN,
   UPDATE_EDITOR_BREAKPOINTS,
@@ -43,26 +41,14 @@ export default function* WorkspaceSaga(): SagaIterator {
 
   yield takeEvery(EVAL_EDITOR, function* (action: ReturnType<typeof actions.evalEditor>) {
     const workspaceLocation = action.payload.workspaceLocation;
-    const [
-      prepend,
-      editorCode,
-      execTime // , symbols, externalLibraryName, globals, variant
-    ]: [
+    const [prepend, editorCode, execTime]: [
       string,
       string,
       number
-      // string[],
-      // ExternalLibraryName,
-      // Array<[string, any]>,
-      // Variant
     ] = yield select((state: OverallState) => [
       state.workspaces[workspaceLocation].editorPrepend,
       state.workspaces[workspaceLocation].editorValue!,
       state.workspaces[workspaceLocation].execTime
-      // state.workspaces[workspaceLocation].context.externalSymbols,
-      // state.workspaces[workspaceLocation].externalLibrary,
-      // state.workspaces[workspaceLocation].globals,
-      // state.workspaces[workspaceLocation].context.variant
     ]);
     // End any code that is running right now.
     yield put(actions.beginInterruptExecution(workspaceLocation));
@@ -132,17 +118,7 @@ export default function* WorkspaceSaga(): SagaIterator {
 
     const builtinSuggestions = Documentation.builtins[variantName] || [];
 
-    const extLib = yield select(
-      (state: OverallState) => state.workspaces[workspaceLocation].externalLibrary
-    );
-
-    const extLibSuggestions = Documentation.externalLibraries[extLib] || [];
-
-    yield call(
-      action.payload.callback,
-      null,
-      editorSuggestions.concat(builtinSuggestions, extLibSuggestions)
-    );
+    yield call(action.payload.callback, null, editorSuggestions.concat(builtinSuggestions));
   });
 
   yield takeEvery(TOGGLE_EDITOR_AUTORUN, function* (
@@ -216,13 +192,11 @@ export default function* WorkspaceSaga(): SagaIterator {
     const result: [
       Variant,
       string[],
-      Array<[string, any]>,
-      ExternalLibraryName
+      Array<[string, any]>
     ] = yield select((state: OverallState) => [
       state.workspaces[workspaceLocation].context.variant,
       state.workspaces[workspaceLocation].context.externalSymbols,
-      state.workspaces[workspaceLocation].globals,
-      state.workspaces[workspaceLocation].externalLibrary
+      state.workspaces[workspaceLocation].globals
     ]);
     const oldVariant = result[0];
     if (newVariant !== oldVariant) {
@@ -230,39 +204,6 @@ export default function* WorkspaceSaga(): SagaIterator {
       yield put(actions.clearReplOutput(workspaceLocation));
       yield put(actions.debuggerReset(workspaceLocation));
       yield call(showSuccessMessage, `Switched to ${styliseSublanguage(newVariant)}`, 1000);
-    }
-  });
-
-  /**
-   * Note that the PLAYGROUND_EXTERNAL_SELECT action is made to
-   * select the library for playground.
-   * This is because assessments do not have a chapter & library select, the question
-   * specifies the chapter and library to be used.
-   *
-   * To abstract this to assessments, the state structure must be manipulated to store
-   * the external library name in a WorkspaceState (as compared to IWorkspaceManagerState).
-   *
-   * @see IWorkspaceManagerState @see WorkspaceState
-   */
-  yield takeEvery(PLAYGROUND_EXTERNAL_SELECT, function* (
-    action: ReturnType<typeof actions.externalLibrarySelect>
-  ) {
-    const { workspaceLocation, externalLibraryName: newExternalLibraryName } = action.payload;
-    const result: [
-      Array<[string, any]>,
-      ExternalLibraryName
-    ] = yield select((state: OverallState) => [
-      state.workspaces[workspaceLocation].globals,
-      state.workspaces[workspaceLocation].externalLibrary
-    ]);
-    const oldExternalLibraryName = result[1];
-    if (newExternalLibraryName !== oldExternalLibraryName || action.payload.initialise) {
-      yield put(actions.changeExternalLibrary(newExternalLibraryName, workspaceLocation));
-      // yield put(actions.beginClearContext(workspaceLocation, true));
-      yield put(actions.clearReplOutput(workspaceLocation));
-      if (!action.payload.initialise) {
-        yield call(showSuccessMessage, `Switched to ${newExternalLibraryName} library`, 1000);
-      }
     }
   });
 

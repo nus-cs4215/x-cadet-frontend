@@ -6,11 +6,9 @@ import { RouteComponentProps } from 'react-router';
 import { Variant } from 'x-slang/dist/types';
 
 import { InterpreterOutput } from '../../commons/application/ApplicationTypes';
-import { ExternalLibraryName } from '../../commons/application/types/ExternalTypes';
 import { ControlBarAutorunButtons } from '../../commons/controlBar/ControlBarAutorunButtons';
 import { ControlBarClearButton } from '../../commons/controlBar/ControlBarClearButton';
 import { ControlBarEvalButton } from '../../commons/controlBar/ControlBarEvalButton';
-import { ControlBarExternalLibrarySelect } from '../../commons/controlBar/ControlBarExternalLibrarySelect';
 import { ControlBarVariantSelect } from '../../commons/controlBar/ControlBarVariantSelect';
 import { HighlightedLines, Position } from '../../commons/editor/EditorTypes';
 import { SideContentType } from '../../commons/sideContent/SideContentTypes';
@@ -49,7 +47,6 @@ export type DispatchProps = {
   handlePromptAutocomplete: (row: number, col: number, callback: any) => void;
   handleEditorWidthChange: (widthChange: number) => void;
   handleEditorUpdateBreakpoints: (breakpoints: string[]) => void;
-  handleExternalSelect: (externalLibraryName: ExternalLibraryName) => void;
   handleFetchSourcecastIndex: () => void;
   handleInterruptEval: () => void;
   handleReplEval: () => void;
@@ -82,7 +79,6 @@ export type StateProps = {
   editorValue: string;
   editorHeight?: number;
   editorWidth: string;
-  externalLibraryName: ExternalLibraryName;
   breakpoints: string[];
   highlightedLines: HighlightedLines[];
   isEditorAutorun: boolean;
@@ -123,9 +119,6 @@ class Sourcecast extends React.Component<SourcecastProps> {
         break;
       case 'variantSelect':
         this.props.handleVariantSelect(inputToApply.data);
-        break;
-      case 'externalLibrarySelect':
-        this.props.handleExternalSelect(inputToApply.data);
         break;
       case 'forcePause':
         this.props.handleSetSourcecastStatus(PlaybackStatus.forcedPaused);
@@ -175,17 +168,6 @@ class Sourcecast extends React.Component<SourcecastProps> {
       />
     );
 
-    const externalSelectHandler = ({ name }: { name: ExternalLibraryName }, _: any) =>
-      this.props.handleExternalSelect(name);
-
-    const externalLibrarySelect = (
-      <ControlBarExternalLibrarySelect
-        externalLibraryName={this.props.externalLibraryName}
-        handleExternalSelect={externalSelectHandler}
-        key="external_library"
-      />
-    );
-
     const editorProps: SourceRecorderEditorProps = {
       codeDeltasToApply: this.props.codeDeltasToApply,
       editorReadonly: this.props.editorReadonly,
@@ -204,7 +186,7 @@ class Sourcecast extends React.Component<SourcecastProps> {
     };
     const workspaceProps: WorkspaceProps = {
       controlBarProps: {
-        editorButtons: [autorunButtons, variantSelect, externalLibrarySelect],
+        editorButtons: [autorunButtons, variantSelect],
         replButtons: [evalButton, clearButton]
       },
       customEditor: <SourceRecorderEditor {...editorProps} />,
@@ -220,8 +202,7 @@ class Sourcecast extends React.Component<SourcecastProps> {
         handleBrowseHistoryUp: this.props.handleBrowseHistoryUp,
         handleReplEval: this.props.handleReplEval,
         handleReplValueChange: this.props.handleReplValueChange,
-        sourceVariant: this.props.sourceVariant,
-        externalLibrary: this.props.externalLibraryName
+        sourceVariant: this.props.sourceVariant
       },
       sideContentHeight: this.props.sideContentHeight,
       sideContentProps: {
@@ -267,8 +248,7 @@ class Sourcecast extends React.Component<SourcecastProps> {
       duration: this.props.playbackDuration,
       playbackData: this.props.playbackData,
       playbackStatus: this.props.playbackStatus,
-      handleVariantSelect: this.props.handleVariantSelect,
-      handleExternalSelect: this.props.handleExternalSelect
+      handleVariantSelect: this.props.handleVariantSelect
     };
     return (
       <div className={classNames('Sourcecast', Classes.DARK)}>

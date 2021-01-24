@@ -10,7 +10,6 @@ import {
   debuggerResume
 } from '../../commons/application/actions/InterpreterActions';
 import { OverallState } from '../../commons/application/ApplicationTypes';
-import { ExternalLibraryName } from '../../commons/application/types/ExternalTypes';
 import { Position } from '../../commons/editor/EditorTypes';
 import { SideContentType } from '../../commons/sideContent/SideContentTypes';
 import {
@@ -22,7 +21,6 @@ import {
   clearReplOutput,
   evalEditor,
   evalRepl,
-  externalLibrarySelect,
   navigateToDeclaration,
   promptAutocomplete,
   setEditorBreakpoint,
@@ -60,7 +58,6 @@ const mapStateToProps: MapStateToProps<StateProps, {}, OverallState> = state => 
   editorReadonly: state.workspaces.sourcecast.editorReadonly,
   editorWidth: state.workspaces.sourcecast.editorWidth,
   editorValue: state.workspaces.sourcecast.editorValue!,
-  externalLibraryName: state.workspaces.sourcecast.externalLibrary,
   isEditorAutorun: state.workspaces.sourcecast.isEditorAutorun,
   inputToApply: state.workspaces.sourcecast.inputToApply,
   breakpoints: state.workspaces.sourcecast.breakpoints,
@@ -99,8 +96,6 @@ const mapDispatchToProps: MapDispatchToProps<DispatchProps, {}> = (dispatch: Dis
         changeEditorWidth(widthChange.toString(), location),
       handleEditorUpdateBreakpoints: (breakpoints: string[]) =>
         setEditorBreakpoint(breakpoints, location),
-      handleExternalSelect: (externalLibraryName: ExternalLibraryName) =>
-        externalLibrarySelect(externalLibraryName, location),
       handleFetchSourcecastIndex: () => fetchSourcecastIndex(location),
       handleInterruptEval: () => beginInterruptExecution(location),
       handleReplEval: () => evalRepl(location),

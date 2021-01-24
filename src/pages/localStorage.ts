@@ -2,7 +2,6 @@ import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
 import { Variant } from 'x-slang/dist/types';
 
 import { OverallState } from '../commons/application/ApplicationTypes';
-import { ExternalLibraryName } from '../commons/application/types/ExternalTypes';
 import { SessionState } from '../commons/application/types/SessionTypes';
 import { showWarningMessage } from '../commons/utils/NotificationsHelper';
 
@@ -11,7 +10,6 @@ export type SavedState = {
   playgroundEditorValue: string | null;
   playgroundIsEditorAutorun: boolean;
   playgroundSourceVariant: Variant;
-  playgroundExternalLibrary: ExternalLibraryName;
 };
 
 export const loadStoredState = (): SavedState | undefined => {
@@ -43,8 +41,7 @@ export const saveState = (state: OverallState) => {
       },
       playgroundEditorValue: state.workspaces.playground.editorValue,
       playgroundIsEditorAutorun: state.workspaces.playground.isEditorAutorun,
-      playgroundSourceVariant: state.workspaces.playground.context.variant,
-      playgroundExternalLibrary: state.workspaces.playground.externalLibrary
+      playgroundSourceVariant: state.workspaces.playground.context.variant
     };
     const serialized = compressToUTF16(JSON.stringify(stateToBeSaved));
     localStorage.setItem('storedState', serialized);

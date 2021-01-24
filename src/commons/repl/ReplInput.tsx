@@ -2,7 +2,6 @@ import * as React from 'react';
 import AceEditor from 'react-ace';
 import { Variant } from 'x-slang/dist/types';
 
-import { ExternalLibraryName } from '../application/types/ExternalTypes';
 import { getModeString, selectMode } from '../utils/AceHelper';
 // source mode and chapter imported in Editor.tsx
 
@@ -18,7 +17,6 @@ type DispatchProps = {
 type StateProps = {
   replValue: string;
   sourceVariant: Variant;
-  externalLibrary: ExternalLibraryName;
 };
 
 class ReplInput extends React.PureComponent<ReplInputProps, {}> {
@@ -61,13 +59,13 @@ class ReplInput extends React.PureComponent<ReplInputProps, {}> {
 
   public render() {
     // see the comment above this same call in Editor.tsx
-    selectMode(this.props.sourceVariant, this.props.externalLibrary);
+    selectMode(this.props.sourceVariant);
 
     return (
       <>
         <AceEditor
           className="repl-react-ace react-ace"
-          mode={getModeString(this.props.sourceVariant, this.props.externalLibrary)}
+          mode={getModeString(this.props.sourceVariant)}
           theme="source"
           height="1px"
           width="100%"

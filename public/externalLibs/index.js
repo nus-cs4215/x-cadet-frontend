@@ -62,44 +62,4 @@ function loadAllLibs() {
   }
 }
 
-/**
- * Loads libraries according to the name provided.
- * This is to faciliate a lack of namespace clash for
- * graphics libraries (@see #341)
- */
-function loadLib(externalLibraryName) {
-  let files
-  switch (externalLibraryName) {
-    case 'RUNES':
-      files = [
-        // graphics
-        '/externalLibs/graphics/gl-matrix.js',
-        '/externalLibs/graphics/webGLgraphics.js',
-        '/externalLibs/graphics/webGLrune.js'
-      ]
-      break
-    case 'CURVES':
-      files = [
-        // graphics
-        '/externalLibs/graphics/gl-matrix.js',
-        '/externalLibs/graphics/webGLhi_graph.js',
-        '/externalLibs/graphics/webGLhi_graph_ce.js',
-        '/externalLibs/graphics/webGLgraphics.js',
-        '/externalLibs/graphics/webGLcurve.js'
-      ]
-      break
-      case 'MACHINELEARNING':
-      files = [
-        // faceAPI
-        '/externalLibs/faceapi/faceapi.js',
-      ]
-      break
-    default:
-      break
-  }
-  for (var i = 0; i < files.length; i++) {
-    dynamicallyLoadScript(files[i])
-  }
-}
-
 loadAllLibs()

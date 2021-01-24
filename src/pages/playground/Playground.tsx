@@ -18,24 +18,15 @@ import {
   /* OverallState, */
   sourceLanguages
 } from '../../commons/application/ApplicationTypes';
-import {
-  /* externalLibraries, */
-  ExternalLibraryName
-} from '../../commons/application/types/ExternalTypes';
 import { ControlBarAutorunButtons } from '../../commons/controlBar/ControlBarAutorunButtons';
 import { ControlBarClearButton } from '../../commons/controlBar/ControlBarClearButton';
 import { ControlBarEvalButton } from '../../commons/controlBar/ControlBarEvalButton';
-import { ControlBarExternalLibrarySelect } from '../../commons/controlBar/ControlBarExternalLibrarySelect';
-import { ControlBarPersistenceButtons } from '../../commons/controlBar/ControlBarPersistenceButtons';
-import { ControlBarSessionButtons } from '../../commons/controlBar/ControlBarSessionButton';
-import { ControlBarShareButton } from '../../commons/controlBar/ControlBarShareButton';
 import { ControlBarStepLimit } from '../../commons/controlBar/ControlBarStepLimit';
 import { ControlBarVariantSelect } from '../../commons/controlBar/ControlBarVariantSelect';
 import { HighlightedLines, Position } from '../../commons/editor/EditorTypes';
 import Markdown from '../../commons/Markdown';
 import { generateSourceIntroduction } from '../../commons/utils/IntroductionHelper';
 import Workspace, { WorkspaceProps } from '../../commons/workspace/Workspace';
-import { PersistenceFile } from '../../features/persistence/PersistenceTypes';
 import {
   CodeDelta,
   Input,
@@ -62,7 +53,6 @@ export type DispatchProps = {
   handleShortenURL: (s: string) => void;
   handleUpdateShortURL: (s: string) => void;
   handleInterruptEval: () => void;
-  handleExternalSelect: (externalLibraryName: ExternalLibraryName, initialise?: boolean) => void;
   handleReplEval: () => void;
   handleReplOutputClear: () => void;
   handleReplValueChange: (newValue: string) => void;
@@ -76,11 +66,6 @@ export type DispatchProps = {
   handleToggleEditorAutorun: () => void;
   handleFetchVariant: () => void;
   handlePromptAutocomplete: (row: number, col: number, callback: any) => void;
-  handlePersistenceOpenPicker: () => void;
-  handlePersistenceSaveFile: () => void;
-  handlePersistenceUpdateFile: (file: PersistenceFile) => void;
-  handlePersistenceInitialise: () => void;
-  handlePersistenceLogOut: () => void;
 };
 
 export type StateProps = {
@@ -103,10 +88,7 @@ export type StateProps = {
   replValue: string;
   sourceVariant: Variant;
   stepLimit: number;
-  sharedbConnected: boolean;
-  externalLibraryName: ExternalLibraryName;
   persistenceUser: string | undefined;
-  persistenceFile: PersistenceFile | undefined;
 };
 
 const keyMap = { goGreen: 'h u l k' };
@@ -125,12 +107,6 @@ function handleHash(hash: string, props: PlaygroundProps) {
     Constants.defaultSourceVariant;
   props.handleVariantSelect(variant);
 
-  const ext =
-    Object.values(ExternalLibraryName).find(v => v === qs.ext) || ExternalLibraryName.NONE;
-  if (ext) {
-    props.handleExternalSelect(ext, true);
-  }
-
   const execTime = Math.max(stringParamToInt(qs.exec || '1000') || 1000, 1000);
   if (execTime) {
     props.handleChangeExecTime(execTime);
@@ -140,21 +116,17 @@ function handleHash(hash: string, props: PlaygroundProps) {
 const Playground: React.FC<PlaygroundProps> = props => {
   const propsRef = React.useRef(props);
   propsRef.current = props;
-  const [lastEdit, setLastEdit] = React.useState(new Date());
+  const setLastEdit = React.useState(new Date())[1];
   const [isGreen, setIsGreen] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState(SideContentType.introduction);
   const setHasBreakpoints = React.useState(false)[1];
   const [sessionId, setSessionId] = React.useState(() =>
     initSession('playground', {
-      editorValue: propsRef.current.editorValue,
-      externalLibrary: propsRef.current.externalLibraryName
+      editorValue: propsRef.current.editorValue
     })
   );
 
   React.useEffect(() => {
-    // Fixes some errors with runes and curves (see PR #1420)
-    propsRef.current.handleExternalSelect(propsRef.current.externalLibraryName, true);
-
     // Only fetch default Playground sublanguage when not loaded via a share link
     if (!propsRef.current.location.hash) {
       propsRef.current.handleFetchSublanguage();
@@ -165,8 +137,7 @@ const Playground: React.FC<PlaygroundProps> = props => {
     // When the editor session Id changes, then treat it as a new session.
     setSessionId(
       initSession('playground', {
-        editorValue: propsRef.current.editorValue,
-        externalLibrary: propsRef.current.externalLibraryName
+        editorValue: propsRef.current.editorValue
       })
     );
   }, [props.editorSessionId]);
@@ -186,10 +157,13 @@ const Playground: React.FC<PlaygroundProps> = props => {
     [isGreen]
   );
 
-  const onEditorValueChange = React.useCallback(val => {
-    setLastEdit(new Date());
-    propsRef.current.handleEditorValueChange(val);
-  }, []);
+  const onEditorValueChange = React.useCallback(
+    val => {
+      setLastEdit(new Date());
+      propsRef.current.handleEditorValueChange(val);
+    },
+    [setLastEdit]
+  );
 
   const onChangeTabs = React.useCallback(
     (
@@ -287,37 +261,6 @@ const Playground: React.FC<PlaygroundProps> = props => {
     [props.handleReplEval, props.isRunning]
   );
 
-  const { persistenceUser, persistenceFile, handlePersistenceUpdateFile } = props;
-  // Compute this here to avoid re-rendering the button every keystroke
-  const persistenceIsDirty =
-    persistenceFile && (!persistenceFile.lastSaved || persistenceFile.lastSaved < lastEdit);
-  const persistenceButtons = React.useMemo(() => {
-    return (
-      <ControlBarPersistenceButtons
-        currentFile={persistenceFile}
-        loggedInAs={persistenceUser}
-        isDirty={persistenceIsDirty}
-        key="googledrive"
-        onClickSaveAs={props.handlePersistenceSaveFile}
-        onClickOpen={props.handlePersistenceOpenPicker}
-        onClickSave={
-          persistenceFile ? () => handlePersistenceUpdateFile(persistenceFile) : undefined
-        }
-        onClickLogOut={props.handlePersistenceLogOut}
-        onPopoverOpening={props.handlePersistenceInitialise}
-      />
-    );
-  }, [
-    persistenceUser,
-    persistenceFile,
-    persistenceIsDirty,
-    props.handlePersistenceSaveFile,
-    props.handlePersistenceOpenPicker,
-    props.handlePersistenceLogOut,
-    props.handlePersistenceInitialise,
-    handlePersistenceUpdateFile
-  ]);
-
   /* const executionTime = React.useMemo(
    *   () => (
    *     <ControlBarExecutionTime
@@ -340,66 +283,7 @@ const Playground: React.FC<PlaygroundProps> = props => {
     [props.handleChangeStepLimit, props.stepLimit]
   );
 
-  const { handleExternalSelect, externalLibraryName, handleEditorValueChange } = props;
-
-  const handleExternalSelectAndRecord = React.useCallback(
-    (name: ExternalLibraryName) => {
-      handleExternalSelect(name);
-
-      const input: Input = {
-        time: Date.now(),
-        type: 'externalLibrarySelect',
-        data: name
-      };
-
-      pushLog(input);
-    },
-    [handleExternalSelect, pushLog]
-  );
-
-  const externalLibrarySelect = React.useMemo(
-    () => (
-      <ControlBarExternalLibrarySelect
-        externalLibraryName={externalLibraryName}
-        handleExternalSelect={({ name }: { name: ExternalLibraryName }, _: any) =>
-          handleExternalSelectAndRecord(name)
-        }
-        key="external_library"
-      />
-    ),
-    [externalLibraryName, handleExternalSelectAndRecord]
-  );
-
-  // No point memoing this, it uses props.editorValue
-  const sessionButtons = (
-    <ControlBarSessionButtons
-      editorSessionId={props.editorSessionId}
-      editorValue={props.editorValue}
-      handleSetEditorSessionId={props.handleSetEditorSessionId}
-      sharedbConnected={props.sharedbConnected}
-      key="session"
-    />
-  );
-
-  const shareButton = React.useMemo(
-    () => (
-      <ControlBarShareButton
-        handleGenerateLz={props.handleGenerateLz}
-        handleShortenURL={props.handleShortenURL}
-        handleUpdateShortURL={props.handleUpdateShortURL}
-        queryString={props.queryString}
-        shortURL={props.shortURL}
-        key="share"
-      />
-    ),
-    [
-      props.handleGenerateLz,
-      props.handleShortenURL,
-      props.handleUpdateShortURL,
-      props.queryString,
-      props.shortURL
-    ]
-  );
+  const { handleEditorValueChange } = props;
 
   const playgroundIntroductionTab: SideContentTab = React.useMemo(
     () => ({
@@ -486,22 +370,13 @@ const Playground: React.FC<PlaygroundProps> = props => {
 
   const workspaceProps: WorkspaceProps = {
     controlBarProps: {
-      editorButtons: [
-        autorunButtons,
-        shareButton,
-        variantSelect,
-        externalLibrarySelect,
-        sessionButtons,
-        persistenceButtons,
-        stepperStepLimit
-      ],
+      editorButtons: [autorunButtons, variantSelect, stepperStepLimit],
       replButtons: [replDisabled ? null : evalButton, clearButton]
     },
     editorProps: {
       onChange: onChangeMethod,
       onCursorChange: onCursorChangeMethod,
       onSelectionChange: onSelectionChangeMethod,
-      externalLibraryName: props.externalLibraryName,
       sourceVariant: props.sourceVariant,
       editorValue: props.editorValue,
       editorSessionId: props.editorSessionId,
@@ -524,7 +399,6 @@ const Playground: React.FC<PlaygroundProps> = props => {
     handleSideContentHeightChange: props.handleSideContentHeightChange,
     replProps: {
       sourceVariant: props.sourceVariant,
-      externalLibrary: props.externalLibraryName,
       output: props.output,
       replValue: props.replValue,
       handleBrowseHistoryDown: props.handleBrowseHistoryDown,
