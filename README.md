@@ -1,4 +1,4 @@
-# Cadet Frontend - X-slang
+# x-frontend
 This is a simplified variant of the Cadent Frontend updated to use a
 simple example calculator language (x-slang) to be used as a base for student projects.
 
@@ -9,7 +9,7 @@ simple example calculator language (x-slang) to be used as a base for student pr
    locally, and have built it and have linked it.
 2. Install a stable version of NodeJS. The active LTS or current version should work fine.
 3. Clone this repository and navigate to it using "cd" in your command line or shell tool.
-4. Run `yarn link x-slang` to use your local x-slang for cadet-frontend.
+4. Run `yarn link x-slang` to use your local x-slang for x-frontend.
 5. Run `yarn install` to install dependencies.
 6. Run `yarn run start` to start the server at `localhost:8000`. **It might take a couple of minutes for the server to start.**
 7. Point your browser to `http://localhost:8000` to see your local Source Academy.
